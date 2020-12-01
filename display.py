@@ -15,8 +15,8 @@ date = datetime.datetime.now().date()
 labels_list = []
 root = Tk()
 root.title("COMPANY BOSSCCOM")
-w =  int(root.winfo_screenwidth()/100)
-h = int(root.winfo_screenheight()/280)
+#w =  int(root.winfo_screenwidth()/100)
+#h = int(root.winfo_screenheight()/280)
 var = IntVar()
 var1 = IntVar()
 c = StringVar()
@@ -26,7 +26,7 @@ class Application:
     def __init__(self, master):
         self.master = master
         # frame
-        self.left = Frame(master, width=330, height=1366, bg='white')
+        self.left = Frame(master, width=330, height=1000, bg='white')
         self.left.pack(side=LEFT)
 
         # components
@@ -77,23 +77,23 @@ class Application:
 
     def ajax(self):
 
-        self.right = Frame(root, width=1100, height=75, bg='white')
+        self.right = Frame(root, width=1000, height=75, bg='white')
         self.right.pack(side=TOP)
 
-        self.bottom = Frame(root, width=1100, height=220, bg='lightblue')
+        self.bottom = Frame(root, width=1000, height=220, bg='lightblue')
         self.bottom.pack(side=TOP)
 
-        self.bottom1 = Frame(root, width=1100, height=80, bg='yellow')
+        self.bottom1 = Frame(root, width=1000, height=80, bg='yellow')
         self.bottom1.pack(side=TOP)
 
-        self.bottom2 = Frame(root, width=1100, height=550, bg='lightblue')
+        self.bottom2 = Frame(root, width=1000, height=550, bg='lightblue')
         self.bottom2.pack(side=TOP)
 
         self.Top = Frame(self.bottom2, width=1000, bd=2, relief=SOLID)
         self.Top.pack(side=TOP)
         self.MidFrame = Frame(self.bottom2, width=1000)
         self.MidFrame.pack(side=TOP)
-        self.RightForm = Frame(self.MidFrame, width=1100)
+        self.RightForm = Frame(self.MidFrame, width=1000)
         self.RightForm.pack(side=RIGHT)
 
         self.bt_add_patient = Button(self.right, text="Lưu hồ sơ", width=14, height=3, font=('arial 12 bold'),
@@ -110,7 +110,7 @@ class Application:
         # command=self.Deletedata)
         self.bt_delele1.place(x=450, y=0)
         #
-        self.bt_thoat = Button(self.right, text="Đóng", width=14, height=3, font=('arial 12 bold'), bg='white')
+        self.bt_thoat = Button(self.right, text="Đóng", width=14, height=3, font=('arial 12 bold'), bg='white',command=self.add_to_cart)
 
         self.bt_thoat.place(x=600, y=0)
         self.bt_thoat = Button(self.right, text="Khôi phục cài đặt gốc", width=18, height=3, font=('arial 12 bold'),
@@ -504,7 +504,13 @@ class Application:
         rows = cur.fetchall()
         for row in rows:
             print("%s" % (row["id"]))
-        webbrowser.open_new(r'doccument/%s.pdf' % ("a" + str(row["id"])))
+        webbrowser.open_new(r'doccument\%s.pdf' % ("a" + str(row["id"])))
+
+    def add_to_cart(self, *args, **kwargs):
+        self.right.destroy()
+        self.bottom.destroy()
+        self.bottom1.destroy()
+        self.bottom2.destroy()
 
 
 b = Application(root)
