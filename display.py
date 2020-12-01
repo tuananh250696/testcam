@@ -5,57 +5,68 @@ import tkinter.messagebox
 from datetime import date
 from tkinter import ttk
 import datetime
+import sys
+from PyQt5.QtWidgets import  QApplication
 import shutil
-from fpdf import FPDF
 import webbrowser
-
 
 today = date.today()
 date = datetime.datetime.now().date()
-labels_list = []
+# temporary lists like sessions
+products_list = []
+product_price = []
+product_quantity = []
+product_id = []
+# list for labels
+#w = root.winfo_screenwidth()
+#h = root.winfo_screenheight()
 root = Tk()
 root.title("COMPANY BOSSCCOM")
-#w =  int(root.winfo_screenwidth()/100)
-#h = int(root.winfo_screenheight()/280)
+labels_list = []
 var = IntVar()
 var1 = IntVar()
 c = StringVar()
 c1 = StringVar()
 
+
+
 class Application:
-    def __init__(self, master):
+    def __init__(self, master, *args, **kwargs):
         self.master = master
         # frame
-        self.left = Frame(master, width=330, height=1000, bg='white')
+
+
+        self.left = Frame(master, width=295, height=1000, bg='white')
         self.left.pack(side=LEFT)
 
         # components
         self.date_l = Label(self.left,
                             text="Today's Date: " + str(today.day) + "-" + str(today.month) + "-" + str(today.year),
-                            font=('arial 19 bold'), bg='lightblue',
+                            font=('arial 18 bold'), bg='lightblue',
                             fg='white')
-        self.date_l.place(x=15, y=8)
+        self.date_l.place(x=10, y=0)
 
         # button
-        self.bt_st_catalog = Button(self.left, text="Hồ sơ bệnh nhân", width=20, height=4, font=('arial 18 bold'),
+        self.bt_st_catalog = Button(self.left, text="Hồ sơ bệnh nhân", width=18, height=4, font=('arial 18 bold'),
                                     bg='orange', command=self.ajax)
         self.bt_st_catalog.place(x=8, y=45)
 
-        self.bt_st_form = Button(self.left, text="Nội soi", width=20, height=4, font=('arial 18 bold'), bg='orange')
-        self.bt_st_form.place(x=8, y=185)
+        self.bt_st_form = Button(self.left, text="Nội soi", width=18, height=4, font=('arial 18 bold'), bg='orange')
+        self.bt_st_form.place(x=8, y=175)
 
-        self.bt_patient = Button(self.left, text="Biểu mẫu in", width=20, height=4, font=('arial 18 bold'), bg='orange',command=self.add_to_bn)
-        self.bt_patient.place(x=8, y=325)
+        self.bt_patient = Button(self.left, text="Biểu mẫu in", width=18, height=4, font=('arial 18 bold'), bg='orange',
+                                 command=self.add_to_bn)
+        self.bt_patient.place(x=8, y=305)
 
-        self.bt_endoscop = Button(self.left, text="Danh mục khám", width=20, height=4, font=('arial 18 bold'),
+        self.bt_endoscop = Button(self.left, text="Danh mục khám", width=18, height=4, font=('arial 18 bold'),
                                   bg='orange', command=self.createNewWindow)
-        self.bt_endoscop.place(x=8, y=465)
+        self.bt_endoscop.place(x=8, y=430)
 
-        self.bt_exit1 = Button(self.left, text="Thoát", width=20, height=4, font=('arial 18 bold'), bg='orange',command=self.quit)
+        self.bt_exit1 = Button(self.left, text="Thoát", width=18, height=4, font=('arial 18 bold'), bg='orange',
+                               command=self.quit)
+        self.bt_exit1.place(x=8, y=560)
 
-        self.bt_exit1.place(x=8, y=605)
-
-    def Search(self):
+    def Search(self, *args, **kwargs):
         # =====================================Table WIDGET=========================================
         self.tree.delete(*self.tree.get_children())
         conn = sqlite3.connect("db_member.db")
@@ -74,48 +85,51 @@ class Application:
         self.from_addss.delete(0, tk.END)
         self.born_agess.delete(0, tk.END)
 
+    def ajax(self, *args, **kwargs):
 
-    def ajax(self):
-
-        self.right = Frame(root, width=1000, height=75, bg='white')
+        self.right = Frame(root, width=1100, height=110, bg='white')
         self.right.pack(side=TOP)
 
-        self.bottom = Frame(root, width=1000, height=220, bg='lightblue')
+        self.bottom = Frame(root, width=1100, height=220, bg='lightblue')
         self.bottom.pack(side=TOP)
 
-        self.bottom1 = Frame(root, width=1000, height=80, bg='yellow')
+        self.bottom1 = Frame(root, width=1100, height=80, bg='yellow')
         self.bottom1.pack(side=TOP)
 
-        self.bottom2 = Frame(root, width=1000, height=550, bg='lightblue')
+        self.bottom2 = Frame(root, width=1100, height=550, bg='lightblue')
         self.bottom2.pack(side=TOP)
 
         self.Top = Frame(self.bottom2, width=1000, bd=2, relief=SOLID)
         self.Top.pack(side=TOP)
         self.MidFrame = Frame(self.bottom2, width=1000)
         self.MidFrame.pack(side=TOP)
-        self.RightForm = Frame(self.MidFrame, width=1000)
+        self.RightForm = Frame(self.MidFrame, width=1100)
         self.RightForm.pack(side=RIGHT)
 
-        self.bt_add_patient = Button(self.right, text="Lưu hồ sơ", width=14, height=3, font=('arial 12 bold'),
-                                     bg='white')
+        self.bt_add_patient = Button(self.right, text="Lưu hồ sơ", width=12, height=4, font=('arial 16 bold'),
+                                     bg='white', command=self.get_itemsdatabase)
         self.bt_add_patient.place(x=0, y=0)
 
-        self.bt_open_file = Button(self.right, text="Mở hồ sơ", width=14, height=3, font=('arial 12 bold'), bg='white',command=self.create_pdf1)
-        self.bt_open_file.place(x=150, y=0)
+        self.bt_open_file = Button(self.right, text="Mở hồ sơ", width=12, height=4, font=('arial 16 bold'), bg='white',
+                                   command=self.create_pdf1)
+        self.bt_open_file.place(x=168, y=0)
         #
-        self.bt_save_file = Button(self.right, text="Làm mới", width=14, height=3, font=('arial 12 bold'), bg='white')
-        self.bt_save_file.place(x=300, y=0)
+        self.bt_save_file = Button(self.right, text="Làm mới", width=12, height=4, font=('arial 16 bold'), bg='white',
+                                   command=self.delete_text)
+        self.bt_save_file.place(x=336, y=0)
         #
-        self.bt_delele1 = Button(self.right, text="Xóa", width=14, height=3, font=('arial 12 bold'), bg='white')
+        self.bt_delele1 = Button(self.right, text="Xóa", width=12, height=4, font=('arial 16 bold'), bg='white',
+                                 command=self.Deletedata)
         # command=self.Deletedata)
-        self.bt_delele1.place(x=450, y=0)
+        self.bt_delele1.place(x=504, y=0)
         #
-        self.bt_thoat = Button(self.right, text="Đóng", width=14, height=3, font=('arial 12 bold'), bg='white',command=self.add_to_cart)
+        self.bt_thoat = Button(self.right, text="Đóng", width=12, height=4, font=('arial 16 bold'), bg='white',
+                               command=self.add_to_cart)
 
-        self.bt_thoat.place(x=600, y=0)
-        self.bt_thoat = Button(self.right, text="Khôi phục cài đặt gốc", width=18, height=3, font=('arial 12 bold'),
-                               bg='white')
-        self.bt_thoat.place(x=755, y=0)
+        self.bt_thoat.place(x=672, y=0)
+        self.bt_thoat = Button(self.right, text="Khôi phục cài đặt gốc", width=16, height=5, font=('arial 12 bold'),
+                               bg='white',command=self.Deletealldata)
+        self.bt_thoat.place(x=840, y=0)
 
         self.tenbenhnhan = Label(self.bottom, text="Tên bệnh nhân:", font=('arial 12 bold'), fg='black', bg='lightblue')
         self.tenbenhnhan.place(x=15, y=5)
@@ -215,7 +229,6 @@ class Application:
         self.tree.heading('Address', text="Address", anchor=W)
         self.tree.heading('Age', text="Age", anchor=W)
 
-
     def Deletedata(self):
 
         conn = sqlite3.connect("db_member.db")
@@ -255,6 +268,7 @@ class Application:
             self.stom.delete(0, END)
             self.nbh.delete(0, END)
             self.telw.delete(0, END)
+            self.endoscopy()
             # textbox insert
             # tkinter.messagebox.showinfo("Success", "Successfully added to the database")
 
@@ -504,16 +518,12 @@ class Application:
         rows = cur.fetchall()
         for row in rows:
             print("%s" % (row["id"]))
-        webbrowser.open_new(r'doccument\%s.pdf' % ("a" + str(row["id"])))
-
-    def add_to_cart(self, *args, **kwargs):
-        self.right.destroy()
-        self.bottom.destroy()
-        self.bottom1.destroy()
-        self.bottom2.destroy()
+        webbrowser.open_new(r'doccument/%s.pdf' % ("a" + str(row["id"])))
 
 
+
+app = QApplication(sys.argv)
+root.geometry("1360x768")
 b = Application(root)
-root.geometry("1366x768+0+0")
-#root.resizable(False, False)
 root.mainloop()
+
